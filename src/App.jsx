@@ -1,121 +1,118 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore'
+import { db } from './firebase/config'
+import Navbar from './components/Navbar'
+import Dashboard from './pages/Dashboard'
+import Applications from './pages/Applications'
+import ColdEmails from './pages/ColdEmails'
+import FollowUps from './pages/FollowUps'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [applications, setApplications] = useState([])
+  const [emails, setEmails] = useState([])
+  const [followups, setFollowups] = useState([])
+
+  // Load applications from Firestore
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, 'applications'), snapshot => {
+      setApplications(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
+    })
+    return unsub
+  }, [])
+
+  // Load emails from Firestore
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, 'emails'), snapshot => {
+      setEmails(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
+    })
+    return unsub
+  }, [])
+
+  // Load followups from Firestore
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, 'followups'), snapshot => {
+      setFollowups(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
+    })
+    return unsub
+  }, [])
+
+  // Applications CRUD
+  async function addApplication(data) {
+    await addDoc(collection(db, 'applications'), data)
+  }
+  async function updateApplication(id, data) {
+    await updateDoc(doc(db, 'applications', id), data)
+  }
+  async function deleteApplication(id) {
+    await deleteDoc(doc(db, 'applications', id))
+  }
+
+  // Emails CRUD
+  async function addEmail(data) {
+    await addDoc(collection(db, 'emails'), data)
+  }
+  async function updateEmail(id, data) {
+    await updateDoc(doc(db, 'emails', id), data)
+  }
+  async function deleteEmail(id) {
+    await deleteDoc(doc(db, 'emails', id))
+  }
+
+  // Followups CRUD
+  async function addFollowup(data) {
+    await addDoc(collection(db, 'followups'), data)
+  }
+  async function updateFollowup(id, data) {
+    await updateDoc(doc(db, 'followups', id), data)
+  }
+  async function deleteFollowup(id) {
+    await deleteDoc(doc(db, 'followups', id))
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <Router>
+      <div className="min-h-screen bg-gray-50 flex">
+        <Navbar />
+        <div className="ml-56 flex-1 px-10 py-10">
+          <Routes>
+            <Route path="/" element={
+              <Dashboard
+                applications={applications}
+                emails={emails}
+                followups={followups}
+              />}
+            />
+            <Route path="/applications" element={
+              <Applications
+                applications={applications}
+                addApplication={addApplication}
+                updateApplication={updateApplication}
+                deleteApplication={deleteApplication}
+              />}
+            />
+            <Route path="/emails" element={
+              <ColdEmails
+                emails={emails}
+                addEmail={addEmail}
+                updateEmail={updateEmail}
+                deleteEmail={deleteEmail}
+                addFollowup={addFollowup}
+                followups={followups}
+              />}
+            />
+            <Route path="/followups" element={
+              <FollowUps
+                followups={followups}
+                addFollowup={addFollowup}
+                updateFollowup={updateFollowup}
+                deleteFollowup={deleteFollowup}
+              />}
+            />
+          </Routes>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      </div>
+    </Router>
   )
 }
 
