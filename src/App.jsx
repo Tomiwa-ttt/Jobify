@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import JobAnalyser from './pages/JobAnalyser'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore'
 import { db } from './firebase/config'
@@ -107,6 +108,10 @@ function App() {
                 addFollowup={addFollowup}
                 updateFollowup={updateFollowup}
                 deleteFollowup={deleteFollowup}
+              />}
+            />
+            <Route path="/analyser" element={
+              <JobAnalyser 
               />}
             />
           </Routes>
