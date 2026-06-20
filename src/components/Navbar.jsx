@@ -6,6 +6,7 @@ const navLinks = [
   { path: '/emails', label: 'Cold Emails' },
   { path: '/followups', label: 'Follow-Ups' },
   { path: '/analyser', label: 'Job Analyser' },
+  { path: '/search', label: 'Job Search' },
 ]
 
 export default function Navbar() {

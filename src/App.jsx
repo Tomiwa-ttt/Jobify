@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import JobAnalyser from './pages/JobAnalyser'
+import JobSearch from './pages/JobSearch'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore'
 import { db } from './firebase/config'
@@ -113,6 +114,10 @@ function App() {
             <Route path="/analyser" element={
               <JobAnalyser 
               />}
+            />
+              <Route path="/search" element={
+                <JobSearch addApplication={addApplication} 
+                />}
             />
           </Routes>
         </div>
